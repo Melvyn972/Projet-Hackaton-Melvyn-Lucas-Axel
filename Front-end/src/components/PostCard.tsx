@@ -1,8 +1,8 @@
 import { Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
-import { Card, CardContent, CardHeader } from './ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Button } from './ui/button';
-import type { Post } from '../lib/api';
+import { Card, CardContent, CardHeader } from './ui/card.tsx';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar.tsx';
+import { Button } from './ui/button.tsx';
+import type { Post } from '../lib/api.ts';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 

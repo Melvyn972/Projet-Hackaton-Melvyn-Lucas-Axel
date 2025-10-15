@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '../store/authStore.ts';
 import { Loader2 } from 'lucide-react';
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Sidebar } from '../components/Sidebar';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Textarea } from '../components/ui/textarea';
-import type { User } from '../lib/api';
-import { userApi } from '../lib/api';
-import { useAuthStore } from '../store/authStore';
+import { Sidebar } from '../components/Sidebar.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card.tsx';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar.tsx';
+import { Button } from '../components/ui/button.tsx';
+import { Input } from '../components/ui/input.tsx';
+import { Textarea } from '../components/ui/textarea.tsx';
+import type { User } from '../lib/api.ts';
+import { userApi } from '../lib/api.ts';
+import { useAuthStore } from '../store/authStore.ts';
 import { Edit2, Save, X } from 'lucide-react';
 
 export const Profile = () => {

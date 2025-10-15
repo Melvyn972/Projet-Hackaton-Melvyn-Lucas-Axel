@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { authApi } from '../lib/api';
-import { useAuthStore } from '../store/authStore';
-import { hashPasswordClient } from '../lib/crypto';
+import { Button } from '../components/ui/button.tsx';
+import { Input } from '../components/ui/input.tsx';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card.tsx';
+import { authApi } from '../lib/api.ts';
+import { useAuthStore } from '../store/authStore.ts';
+import { hashPasswordClient } from '../lib/crypto.ts';
 import { Loader2 } from 'lucide-react';
 
 export const Signup = () => {
