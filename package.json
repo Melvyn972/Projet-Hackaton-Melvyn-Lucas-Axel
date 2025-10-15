@@ -1,0 +1,11 @@
+{
+  "name": "projet-hackaton-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:frontend": "cd Front-end && npm install",
+    "build": "cd Front-end && npm install && npm run build",
+    "dev": "cd Front-end && npm run dev"
+  }
+}
+
