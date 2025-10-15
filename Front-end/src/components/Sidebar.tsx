@@ -4,6 +4,18 @@ import { useAuthStore } from '../store/authStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authApi } from '../lib/api';
 
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+
+
 export const Sidebar = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
@@ -29,11 +41,11 @@ export const Sidebar = () => {
   }
 
   return (
-    <div className="h-screen sticky top-0 w-64 border-r bg-card p-4 flex flex-col">
+    <div className="h-screen sticky top-0 w-64 bg-card p-4 flex flex-col">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-primary">Social</h1>
+        <a href="/"><h1 className="text-2xl font-bold text-primary">Social</h1></a>
       </div>
-      
+
       <nav className="flex-1 space-y-2">
         {menuItems.map((item) => (
           <Button
@@ -49,14 +61,34 @@ export const Sidebar = () => {
       </nav>
 
       <div className="border-t pt-4">
-        <div className="mb-3">
-          <p className="font-semibold">{user?.firstName} {user?.lastName}</p>
-          <p className="text-sm text-muted-foreground">{user?.email}</p>
-        </div>
-        <Button variant="outline" className="w-full" onClick={handleLogout}>
-          <LogOut className="h-4 w-4 mr-2" />
-          Déconnexion
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className='h-fit'>
+              <div className="flex items-center gap-3">
+                <Avatar>
+                  <AvatarImage src={user?.avatar} />
+                </Avatar>
+                <p className="font-semibold">{user?.firstName} {user?.lastName}</p>
+                <p className="text-sm text-muted-foreground">{user?.email}</p>
+              </div></Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <Button
+              key={'/profile'}
+              className="w-full justify-start"
+              variant="ghost"
+              onClick={() => navigate('/profile')}
+            >
+              <User className="h-4 w-4" />
+              Profil
+            </Button>
+            <DropdownMenuSeparator />
+            <Button variant="ghost" onClick={handleLogout}>
+              <LogOut className="h-4 w-4" />
+              Déconnexion
+            </Button>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
