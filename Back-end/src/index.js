@@ -14,8 +14,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Set-Cookie']
 }));
 
 app.use(express.json());
@@ -27,6 +30,23 @@ if (process.env.NODE_ENV === 'development') {
     next();
   });
 }
+
+// Route d'accueil
+app.get('/', (req, res) => {
+  res.json({
+    name: 'Mini Réseau Social API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth/*',
+      users: '/api/users/*',
+      posts: '/api/posts/*',
+      admin: '/api/admin/*'
+    },
+    documentation: 'Consultez API_DOCUMENTATION.md pour plus de détails'
+  });
+});
 
 app.get('/api/health', (req, res) => {
   res.json({ 

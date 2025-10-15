@@ -10,7 +10,6 @@ export const signup = async (req, res, next) => {
     
     validateRequired(['email', 'password', 'firstName', 'lastName'], req.body);
     validateEmail(email);
-    validatePassword(password);
     
     const existingUser = await prisma.user.findUnique({ 
       where: { email: email.toLowerCase() } 
@@ -20,7 +19,8 @@ export const signup = async (req, res, next) => {
       throw new ConflictError('Cet email est déjà utilisé');
     }
     
-    const passwordHash = await hashPassword(password);
+    // Le mot de passe arrive déjà hashé du frontend
+    const passwordHash = password;
     
     const user = await prisma.user.create({
       data: {
@@ -57,7 +57,7 @@ export const signup = async (req, res, next) => {
     res.cookie('sessionToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       expires: expiresAt
     });
     
@@ -85,7 +85,8 @@ export const signin = async (req, res, next) => {
       throw new AuthenticationError('Email ou mot de passe incorrect');
     }
     
-    const isPasswordValid = await comparePassword(password, user.passwordHash);
+    // Le mot de passe arrive déjà hashé du frontend, on compare directement
+    const isPasswordValid = (password === user.passwordHash);
     
     if (!isPasswordValid) {
       throw new AuthenticationError('Email ou mot de passe incorrect');
@@ -105,7 +106,7 @@ export const signin = async (req, res, next) => {
     res.cookie('sessionToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       expires: expiresAt
     });
     
@@ -161,7 +162,7 @@ export const refreshToken = async (req, res, next) => {
     res.cookie('sessionToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       expires: expiresAt
     });
     
