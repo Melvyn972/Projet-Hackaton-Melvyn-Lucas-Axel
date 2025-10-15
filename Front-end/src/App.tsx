@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store/authStore.ts';
-import { authApi } from './lib/api.ts';
-import { ProtectedRoute } from './components/ProtectedRoute.tsx';
-import { Login } from './pages/Login.tsx';
-import { Signup } from './pages/Signup.tsx';
-import { Feed } from './pages/Feed.tsx';
-import { Profile } from './pages/Profile.tsx';
-import { Admin } from './pages/Admin.tsx';
+import { useAuthStore } from './store/authStore';
+import { authApi } from './lib/api';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
+import { Feed } from './pages/Feed';
+import { Profile } from './pages/Profile';
+import { Admin } from './pages/Admin';
 
 function App() {
   const { setUser, setLoading } = useAuthStore();

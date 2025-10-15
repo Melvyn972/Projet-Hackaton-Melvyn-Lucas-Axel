@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User } from '../lib/api.ts';
+import type { User } from '../lib/api';
 
 interface AuthState {
   user: User | null;

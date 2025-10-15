@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Sidebar } from '../components/Sidebar.tsx';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card.tsx';
-import { adminApi } from '../lib/api.ts';
+import { Sidebar } from '../components/Sidebar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { adminApi } from '../lib/api';
 import { Users, FileText, Heart, MessageCircle } from 'lucide-react';
 
 export const Admin = () => {

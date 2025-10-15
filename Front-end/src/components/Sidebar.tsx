@@ -1,8 +1,8 @@
 import { Home, User, Users, Settings, Shield, LogOut } from 'lucide-react';
-import { Button } from './ui/button.tsx';
-import { useAuthStore } from '../store/authStore.ts';
+import { Button } from './ui/button';
+import { useAuthStore } from '../store/authStore';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { authApi } from '../lib/api.ts';
+import { authApi } from '../lib/api';
 
 export const Sidebar = () => {
   const { user, logout } = useAuthStore();

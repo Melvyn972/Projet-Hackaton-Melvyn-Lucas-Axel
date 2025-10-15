@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Sidebar } from '../components/Sidebar.tsx';
-import { CreatePost } from '../components/CreatePost.tsx';
-import { PostCard } from '../components/PostCard.tsx';
-import type { Post } from '../lib/api.ts';
-import { postApi } from '../lib/api.ts';
-import { Button } from '../components/ui/button.tsx';
+import { Sidebar } from '../components/Sidebar';
+import { CreatePost } from '../components/CreatePost';
+import { PostCard } from '../components/PostCard';
+import type { Post } from '../lib/api';
+import { postApi } from '../lib/api';
+import { Button } from '../components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 export const Feed = () => {

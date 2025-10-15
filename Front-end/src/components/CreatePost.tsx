@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Card, CardContent } from './ui/card.tsx';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar.tsx';
-import { Button } from './ui/button.tsx';
-import { Textarea } from './ui/textarea.tsx';
-import { Input } from './ui/input.tsx';
+import { Card, CardContent } from './ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Button } from './ui/button';
+import { Textarea } from './ui/textarea';
+import { Input } from './ui/input';
 import { Image, Send } from 'lucide-react';
-import { useAuthStore } from '../store/authStore.ts';
+import { useAuthStore } from '../store/authStore';
 
 interface CreatePostProps {
   onSubmit: (content: string, imageUrl?: string) => Promise<void>;
