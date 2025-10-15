@@ -57,7 +57,7 @@ export const signup = async (req, res, next) => {
     res.cookie('sessionToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       expires: expiresAt
     });
     
@@ -105,7 +105,7 @@ export const signin = async (req, res, next) => {
     res.cookie('sessionToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       expires: expiresAt
     });
     
@@ -161,7 +161,7 @@ export const refreshToken = async (req, res, next) => {
     res.cookie('sessionToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       expires: expiresAt
     });
     
