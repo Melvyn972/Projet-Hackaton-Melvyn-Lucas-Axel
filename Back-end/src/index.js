@@ -28,6 +28,23 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
+// Route d'accueil
+app.get('/', (req, res) => {
+  res.json({
+    name: 'Mini Réseau Social API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth/*',
+      users: '/api/users/*',
+      posts: '/api/posts/*',
+      admin: '/api/admin/*'
+    },
+    documentation: 'Consultez API_DOCUMENTATION.md pour plus de détails'
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
