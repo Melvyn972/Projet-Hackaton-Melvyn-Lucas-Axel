@@ -2,7 +2,7 @@ import { Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
-import { Post } from '../lib/api';
+import type { Post } from '../lib/api';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 

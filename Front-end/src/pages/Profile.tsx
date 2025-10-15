@@ -5,12 +5,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
-import { userApi, User } from '../lib/api';
+import type { User } from '../lib/api';
+import { userApi } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { Edit2, Save, X } from 'lucide-react';
 
 export const Profile = () => {
-  const { user: currentUser, setUser } = useAuthStore();
+  const { setUser } = useAuthStore();
   const [profile, setProfile] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({

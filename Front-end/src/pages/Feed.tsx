@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { CreatePost } from '../components/CreatePost';
 import { PostCard } from '../components/PostCard';
-import { postApi, Post } from '../lib/api';
+import type { Post } from '../lib/api';
+import { postApi } from '../lib/api';
 import { Button } from '../components/ui/button';
 import { Loader2 } from 'lucide-react';
 
