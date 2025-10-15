@@ -72,8 +72,28 @@ export const Feed = () => {
     }
   };
 
-  const handleComment = (postId: string) => {
-    console.log('Comment on post:', postId);
+  const handleComment = async (postId: string, content: string) => {
+    try {
+      await postApi.addComment(postId, content);
+      
+      // Mettre à jour le compteur de commentaires
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === postId
+            ? {
+                ...p,
+                _count: {
+                  ...p._count,
+                  comments: p._count.comments + 1,
+                },
+              }
+            : p
+        )
+      );
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      throw error;
+    }
   };
 
   const loadMore = () => {

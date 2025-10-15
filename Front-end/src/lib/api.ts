@@ -65,6 +65,7 @@ export const userApi = {
   updateProfile: (data: Partial<User>) => api.put('/users/profile', data),
   getUserById: (userId: string) => api.get(`/users/${userId}`),
   searchUsers: (query: string) => api.get(`/users/search?q=${query}`),
+  addProfileComment: (userId: string, content: string) => api.post(`/users/${userId}/comments`, { content }),
 };
 
 export const postApi = {
