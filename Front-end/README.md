@@ -1,73 +1,125 @@
-# React + TypeScript + Vite
+# Mini Réseau Social - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application React moderne inspirée de Facebook avec TypeScript, Tailwind CSS et shadcn/ui.
 
-Currently, two official plugins are available:
+## 🚀 Démarrage
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Installation
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Configuration
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Créez un fichier `.env` :
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_API_URL=http://localhost:3001/api
 ```
+
+### Lancement
+
+```bash
+npm run dev
+```
+
+L'application sera accessible sur `http://localhost:5173`
+
+## 📦 Technologies
+
+- **React 19** avec TypeScript
+- **React Router** pour la navigation
+- **Zustand** pour le state management
+- **Axios** pour les appels API
+- **Tailwind CSS** pour le style
+- **shadcn/ui** pour les composants UI
+- **Lucide React** pour les icônes
+- **date-fns** pour la gestion des dates
+
+## 🎨 Fonctionnalités
+
+### Authentification
+- ✅ Inscription
+- ✅ Connexion
+- ✅ Déconnexion
+- ✅ Session persistante
+
+### Feed
+- ✅ Création de posts (texte + image)
+- ✅ Affichage du fil d'actualité
+- ✅ Système de likes
+- ✅ Commentaires
+- ✅ Pagination
+
+### Profil
+- ✅ Consultation du profil
+- ✅ Modification du profil
+- ✅ Avatar personnalisé
+- ✅ Description
+
+### Admin
+- ✅ Dashboard avec KPI
+- ✅ Statistiques globales
+- ✅ Répartition par genre
+- ✅ Moyennes et engagement
+
+## 📁 Structure
+
+```
+src/
+├── components/           # Composants réutilisables
+│   ├── ui/              # Composants shadcn/ui
+│   ├── PostCard.tsx     # Carte de post
+│   ├── CreatePost.tsx   # Formulaire création post
+│   ├── Sidebar.tsx      # Barre latérale navigation
+│   └── ProtectedRoute.tsx
+├── pages/               # Pages de l'application
+│   ├── Login.tsx
+│   ├── Signup.tsx
+│   ├── Feed.tsx
+│   ├── Profile.tsx
+│   └── Admin.tsx
+├── lib/                 # Utilitaires
+│   ├── api.ts          # Client API
+│   └── utils.ts        # Helpers
+├── store/              # State management
+│   └── authStore.ts    # Store authentification
+└── App.tsx             # Composant racine
+```
+
+## 🎨 Design
+
+Interface moderne inspirée de Facebook avec :
+- Design épuré et moderne
+- Mode sombre/clair
+- Composants réactifs
+- Animations fluides
+- UX optimisée
+
+## 🔐 Authentification
+
+L'authentification utilise des cookies HTTP-only pour la sécurité.
+Les routes sont protégées via le composant `ProtectedRoute`.
+
+## 📝 Scripts
+
+```bash
+npm run dev      # Développement
+npm run build    # Build production
+npm run preview  # Preview production
+npm run lint     # Linter
+```
+
+## 🚀 Déploiement
+
+L'application est prête pour le déploiement sur Vercel :
+
+1. Pusher le code sur GitHub
+2. Connecter le repo à Vercel
+3. Configurer `VITE_API_URL` dans les variables d'environnement
+4. Déployer !
+
+## 📚 Documentation API
+
+Consultez `Back-end/API_DOCUMENTATION.md` pour la documentation complète des endpoints.

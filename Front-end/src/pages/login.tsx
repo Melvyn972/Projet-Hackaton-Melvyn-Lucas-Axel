@@ -1,76 +1,93 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { authApi } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
+import { hashPasswordClient } from '../lib/crypto';
 
-interface Login1Props {
-  heading?: string;
-  logo: {
-    url: string;
-    src: string;
-    alt: string;
-    title?: string;
+export const Login = () => {
+  const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const hashedPassword = await hashPasswordClient(password);
+      
+      const response = await authApi.signin(email, hashedPassword);
+      setUser(response.data.user);
+      navigate('/');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Erreur de connexion');
+    } finally {
+      setLoading(false);
+    }
   };
-  buttonText?: string;
-  googleText?: string;
-  signupText?: string;
-  signupUrl?: string;
-}
 
-const Login1 = ({
-  heading = "Login",
-  logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-wordmark.svg",
-    alt: "logo",
-    title: "shadcnblocks.com",
-  },
-  buttonText = "Login",
-  signupText = "Need an account?",
-  signupUrl = "https://shadcnblocks.com",
-}: Login1Props) => {
   return (
-    <section className="bg-muted h-screen">
-      <div className="flex h-full items-center justify-center">
-        {/* Logo */}
-        <div className="flex flex-col items-center gap-6 lg:justify-start">
-          <a href={logo.url}>
-            <img
-              src={logo.src}
-              alt={logo.alt}
-              title={logo.title}
-              className="h-10 dark:invert"
-            />
-          </a>
-          <div className="min-w-sm border-muted bg-background flex w-full max-w-sm flex-col items-center gap-y-4 rounded-md border px-6 py-8 shadow-md">
-            {heading && <h1 className="text-xl font-semibold">{heading}</h1>}
-            <Input
-              type="email"
-              placeholder="Email"
-              className="text-sm"
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              className="text-sm"
-              required
-            />
-            <Button type="submit" className="w-full">
-              {buttonText}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <div className="flex justify-center mb-4">
+            <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center">
+              <span className="text-2xl font-bold text-primary-foreground">S</span>
+            </div>
+          </div>
+          <CardTitle className="text-2xl text-center">Connexion</CardTitle>
+          <CardDescription className="text-center">
+            Connectez-vous à votre compte
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/20 rounded-md">
+                {error}
+              </div>
+            )}
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
+                type="password"
+                placeholder="Mot de passe"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Connexion...' : 'Se connecter'}
+            </Button>
+          </form>
+          <div className="mt-4 text-center text-sm">
+            <span className="text-muted-foreground">Pas encore de compte ? </span>
+            <Button
+              variant="link"
+              className="p-0 h-auto"
+              onClick={() => navigate('/signup')}
+            >
+              S'inscrire
             </Button>
           </div>
-          <div className="text-muted-foreground flex justify-center gap-1 text-sm">
-            <p>{signupText}</p>
-            <a
-              href={signupUrl}
-              className="text-primary font-medium hover:underline"
-            >
-              Sign up
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
-
-export { Login1 };

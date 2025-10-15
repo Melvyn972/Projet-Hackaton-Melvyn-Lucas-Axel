@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// ENUMS
+// ========================================
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+// ========================================
+// MODELS
+// ========================================
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  passwordHash String
+  role        Role     @default(USER)
+  
+  // Informations du profil
+  firstName   String
+  lastName    String
+  avatar      String?
+  description String?  @db.Text
+  gender      Gender?
+  
+  // Dates
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  addresses         Address[]
+  sessions          Session[]
+  posts             Post[]
+  comments          Comment[]
+  profileComments   ProfileComment[]  @relation("ProfileCommentAuthor")
+  receivedProfileComments ProfileComment[] @relation("ProfileCommentTarget")
+  postLikes         PostLike[]
+  
+  @@index([email])
+  @@map("users")
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  street      String
+  city        String
+  postalCode  String
+  country     String
+  isPrimary   Boolean  @default(false)
+  
+  // Relations
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+  @@map("addresses")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  imageUrl    String?
+  
+  // Relations
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+  likes       PostLike[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("posts")
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  
+  // Relations
+  postId      String
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([postId])
+  @@index([authorId])
+  @@map("comments")
+}
+
+model ProfileComment {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  
+  // Relations - Commentaire SUR un profil PAR un utilisateur
+  targetUserId String
+  targetUser   User    @relation("ProfileCommentTarget", fields: [targetUserId], references: [id], onDelete: Cascade)
+  
+  authorId    String
+  author      User     @relation("ProfileCommentAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([targetUserId])
+  @@index([authorId])
+  @@map("profile_comments")
+}
+
+model PostLike {
+  id        String   @id @default(cuid())
+  
+  // Relations
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  // Un utilisateur ne peut liker qu'une seule fois un post
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+  @@map("post_likes")
+}
+

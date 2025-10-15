@@ -1,0 +1,30 @@
+# Documentation
+ARCHITECTURE_COMPLETE.md
+CONFIGURATION_ENV.md
+DEMARRAGE_RAPIDE.md
+BACKEND_COMPLETE.md
+PROJET_COMPLET.md
+QUICKSTART.md
+RECAPITULATIF.md
+SETUP_GUIDE.md
+VERIFICATION_CONSIGNES.md
+
+# Node modules
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+

@@ -1,82 +1,110 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { authApi } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
+import { hashPasswordClient } from '../lib/crypto';
 
-interface Signup1Props {
-  heading?: string;
-  logo: {
-    url: string;
-    src: string;
-    alt: string;
-    title?: string;
+export const Signup = () => {
+  const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const hashedPassword = await hashPasswordClient(formData.password);
+      
+      const response = await authApi.signup({
+        ...formData,
+        password: hashedPassword,
+      });
+      setUser(response.data.user);
+      navigate('/');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Erreur lors de l\'inscription');
+    } finally {
+      setLoading(false);
+    }
   };
-  buttonText?: string;
-  googleText?: string;
-  signupText?: string;
-  signupUrl?: string;
-}
 
-const Signup1 = ({
-  heading = "Signup",
-  logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-wordmark.svg",
-    alt: "logo",
-    title: "shadcnblocks.com",
-  },
-  buttonText = "Create Account",
-  signupText = "Already a user?",
-  signupUrl = "https://shadcnblocks.com",
-}: Signup1Props) => {
   return (
-    <section className="bg-muted h-screen">
-      <div className="flex h-full items-center justify-center">
-        {/* Logo */}
-        <div className="flex flex-col items-center gap-6 lg:justify-start">
-          <a href={logo.url}>
-            <img
-              src={logo.src}
-              alt={logo.alt}
-              title={logo.title}
-              className="h-10 dark:invert"
-            />
-          </a>
-          <div className="min-w-sm border-muted bg-background flex w-full max-w-sm flex-col items-center gap-y-4 rounded-md border px-6 py-8 shadow-md">
-            {heading && <h1 className="text-xl font-semibold">{heading}</h1>}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <div className="flex justify-center mb-4">
+            <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center">
+              <span className="text-2xl font-bold text-primary-foreground">S</span>
+            </div>
+          </div>
+          <CardTitle className="text-2xl text-center">Inscription</CardTitle>
+          <CardDescription className="text-center">
+            Créez votre compte pour commencer
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/20 rounded-md">
+                {error}
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                placeholder="Prénom"
+                value={formData.firstName}
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                required
+              />
+              <Input
+                placeholder="Nom"
+                value={formData.lastName}
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                required
+              />
+            </div>
             <Input
               type="email"
               placeholder="Email"
-              className="text-sm"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
             />
             <Input
               type="password"
-              placeholder="Password"
-              className="text-sm"
+              placeholder="Mot de passe (min 8 caractères)"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
             />
-            <Input
-              type="password"
-              placeholder="Confirm Password"
-              className="text-sm"
-              required
-            />
-            <Button type="submit" className="w-full">
-              {buttonText}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Inscription...' : 'S\'inscrire'}
+            </Button>
+          </form>
+          <div className="mt-4 text-center text-sm">
+            <span className="text-muted-foreground">Déjà un compte ? </span>
+            <Button
+              variant="link"
+              className="p-0 h-auto"
+              onClick={() => navigate('/login')}
+            >
+              Se connecter
             </Button>
           </div>
-          <div className="text-muted-foreground flex justify-center gap-1 text-sm">
-            <p>{signupText}</p>
-            <a
-              href={signupUrl}
-              className="text-primary font-medium hover:underline"
-            >
-              Login
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
-
-export { Signup1 };
