@@ -134,11 +134,6 @@ export const Feed = () => {
           </>
         )}
       </div>
-
-      <div className="w-80 border-l bg-card p-4 hidden lg:block sticky top-0 h-screen">
-        <h3 className="font-semibold mb-4">Suggestions</h3>
-        <p className="text-sm text-muted-foreground">Aucune suggestion pour le moment</p>
-      </div>
     </div>
   );
 };
