@@ -22,8 +22,6 @@ export const Sidebar = () => {
   const menuItems = [
     { icon: Home, label: 'Accueil', path: '/' },
     { icon: User, label: 'Profil', path: '/profile' },
-    { icon: Users, label: 'Amis', path: '/friends' },
-    { icon: Settings, label: 'Paramètres', path: '/settings' },
   ];
 
   if (user?.role === 'ADMIN') {
