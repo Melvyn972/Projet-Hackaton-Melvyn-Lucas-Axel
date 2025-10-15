@@ -1,0 +1,13 @@
+{
+  "buildCommand": "cd Front-end && npm install && npm run build",
+  "outputDirectory": "Front-end/dist",
+  "installCommand": "echo 'Skipping root install'",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+
