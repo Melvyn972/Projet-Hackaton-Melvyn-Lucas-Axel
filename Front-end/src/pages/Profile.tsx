@@ -60,23 +60,23 @@ export const Profile = () => {
     <div className="flex min-h-screen bg-background">
       <Sidebar />
       
-      <div className="flex-1 max-w-4xl mx-auto p-6">
+      <div className="flex-1 max-w-4xl mx-auto p-4">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Mon Profil</CardTitle>
               {!isEditing ? (
-                <Button onClick={() => setIsEditing(true)} variant="outline">
+                <Button className='cursor-pointer' onClick={() => setIsEditing(true)} variant="outline">
                   <Edit2 className="h-4 w-4 mr-2" />
                   Modifier
                 </Button>
               ) : (
                 <div className="flex gap-2">
-                  <Button onClick={handleSave} size="sm">
+                  <Button className='cursor-pointer' onClick={handleSave} size="sm">
                     <Save className="h-4 w-4 mr-2" />
                     Enregistrer
                   </Button>
-                  <Button onClick={() => setIsEditing(false)} variant="outline" size="sm">
+                  <Button className='cursor-pointer' onClick={() => setIsEditing(false)} variant="outline" size="sm">
                     <X className="h-4 w-4 mr-2" />
                     Annuler
                   </Button>
