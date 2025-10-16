@@ -1,33 +1,13 @@
-import { Home, User, Shield, LogOut } from 'lucide-react';
+import { Home, User, Shield } from 'lucide-react';
 import { Button } from './ui/button';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { authApi } from '../lib/api';
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
-import { Avatar, AvatarImage } from './ui/avatar';
 
 
 export const Sidebar = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const handleLogout = async () => {
-    try {
-      await authApi.signout();
-      logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
 
   const menuItems = [
     { icon: Home, label: 'Accueil', path: '/' },
