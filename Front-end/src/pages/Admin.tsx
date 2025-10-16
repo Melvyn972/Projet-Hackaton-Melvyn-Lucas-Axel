@@ -42,7 +42,7 @@ export const Admin = () => {
     try {
       const [statsRes, timelineRes, topUsersRes, topPostsRes] = await Promise.all([
         adminApi.getStats(),
-        adminApi.getActivityTimeline(30),
+        adminApi.getActivityTimeline(14),
         adminApi.getTopUsers(5),
         adminApi.getTopPosts(5),
       ]);
@@ -126,9 +126,9 @@ export const Admin = () => {
           
           {/* Tabs */}
           <div className="mb-6 flex gap-2">
-            <Button variant={activeTab === 'stats' ? 'default' : 'outline'} onClick={() => setActiveTab('stats')}>Statistiques</Button>
-            <Button variant={activeTab === 'users' ? 'default' : 'outline'} onClick={() => setActiveTab('users')}>Utilisateurs</Button>
-            <Button variant={activeTab === 'posts' ? 'default' : 'outline'} onClick={() => setActiveTab('posts')}>Posts</Button>
+            <Button className="cursor-pointer" variant={activeTab === 'stats' ? 'default' : 'outline'} onClick={() => setActiveTab('stats')}>Statistiques</Button>
+            <Button className="cursor-pointer" variant={activeTab === 'users' ? 'default' : 'outline'} onClick={() => setActiveTab('users')}>Utilisateurs</Button>
+            <Button className="cursor-pointer" variant={activeTab === 'posts' ? 'default' : 'outline'} onClick={() => setActiveTab('posts')}>Posts</Button>
           </div>
           
           {activeTab === 'stats' && (
@@ -186,7 +186,7 @@ export const Admin = () => {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Activité (30 jours)</CardTitle>
+                    <CardTitle className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Activité (14 jours)</CardTitle>
                     <CardDescription>Nouveaux utilisateurs et posts par jour</CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -298,12 +298,12 @@ export const Admin = () => {
                       <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input placeholder="Rechercher par nom ou email" value={userSearch} onChange={(e) => setUserSearch(e.target.value)} className="pl-8" />
                     </div>
-                    <select className="border rounded-md h-9 px-2" value={userRoleFilter} onChange={(e) => setUserRoleFilter(e.target.value as any)}>
+                    <select className="cursor-pointer border rounded-md h-9 px-2" value={userRoleFilter} onChange={(e) => setUserRoleFilter(e.target.value as any)}>
                       <option value="ALL">Tous les rôles</option>
                       <option value="USER">USER</option>
                       <option value="ADMIN">ADMIN</option>
                     </select>
-                    <Button variant="outline" onClick={() => { setUserPage(1); void loadUsers(); }}>Appliquer</Button>
+                    <Button className='cursor-pointer' variant="outline" onClick={() => { setUserPage(1); void loadUsers(); }}>Appliquer</Button>
                   </div>
 
                   <div className="divide-y">
@@ -323,11 +323,11 @@ export const Admin = () => {
                               <Shield className="h-3 w-3" />
                               {u.role}
                             </div>
-                            <select className="border rounded-md h-9 px-2" value={u.role} onChange={(e) => onChangeUserRole(u.id, e.target.value as 'USER' | 'ADMIN')}>
+                            <select className="cursor-pointer border rounded-md h-9 px-2" value={u.role} onChange={(e) => onChangeUserRole(u.id, e.target.value as 'USER' | 'ADMIN')}>
                               <option value="USER">USER</option>
                               <option value="ADMIN">ADMIN</option>
                             </select>
-                            <Button variant="destructive" size="icon" aria-label="Supprimer" onClick={() => onDeleteUser(u.id)}>
+                            <Button className='cursor-pointer' variant="destructive" size="icon" aria-label="Supprimer" onClick={() => onDeleteUser(u.id)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -337,9 +337,9 @@ export const Admin = () => {
                   </div>
 
                   <div className="flex items-center justify-between mt-4 text-sm">
-                    <Button variant="outline" onClick={() => setUserPage((p) => Math.max(1, p - 1))} disabled={userPage === 1}>Précédent</Button>
+                    <Button className="cursor-pointer" variant="outline" onClick={() => setUserPage((p) => Math.max(1, p - 1))} disabled={userPage === 1}>Précédent</Button>
                     <span>Page {userPage} / {userTotalPages}</span>
-                    <Button variant="outline" onClick={() => setUserPage((p) => Math.min(userTotalPages, p + 1))} disabled={userPage >= userTotalPages}>Suivant</Button>
+                    <Button className="cursor-pointer" variant="outline" onClick={() => setUserPage((p) => Math.min(userTotalPages, p + 1))} disabled={userPage >= userTotalPages}>Suivant</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -359,7 +359,7 @@ export const Admin = () => {
                       <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input placeholder="Filtrer par texte (client)" value={postSearch} onChange={(e) => setPostSearch(e.target.value)} className="pl-8" />
                     </div>
-                    <Button variant="outline" onClick={() => void loadPosts()}>Rafraîchir</Button>
+                    <Button className='cursor-pointer' variant="outline" onClick={() => void loadPosts()}>Rafraîchir</Button>
                   </div>
                   <div className="divide-y">
                     {postsLoading ? (
@@ -377,7 +377,7 @@ export const Admin = () => {
                               <div className="text-xs text-muted-foreground">❤ {p._count.likes} · 💬 {p._count.comments}</div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Button variant="destructive" size="icon" aria-label="Supprimer le post" onClick={() => onDeletePost(p.id)}>
+                              <Button className='cursor-pointer' variant="destructive" size="icon" aria-label="Supprimer le post" onClick={() => onDeletePost(p.id)}>
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
