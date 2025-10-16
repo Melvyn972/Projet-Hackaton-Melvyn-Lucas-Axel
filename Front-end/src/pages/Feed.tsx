@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
+import { Sidebar2 } from '@/components/Sidebar2';
 import { CreatePost } from '../components/CreatePost';
 import { PostCard } from '../components/PostCard';
 import type { Post } from '../lib/api';
@@ -133,7 +134,8 @@ export const Feed = () => {
             )}
           </>
         )}
-      </div>      
+      </div>
+      <Sidebar2 />      
     </div>
   );
 };

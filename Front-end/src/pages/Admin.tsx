@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
+import { Sidebar2 } from '@/components/Sidebar2';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { adminApi, postApi, type Post, type User } from '../lib/api';
 import { Users, FileText, Heart, MessageCircle, Shield, Trash2, Search, TrendingUp } from 'lucide-react';
@@ -391,6 +392,7 @@ export const Admin = () => {
           )}
         </div>
       </div>
+      <Sidebar2 />
     </div>
   );
 };

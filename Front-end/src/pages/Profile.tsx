@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
+import { Sidebar2 } from '@/components/Sidebar2';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
@@ -289,6 +290,7 @@ export const Profile = () => {
           </CardContent>
         </Card>
       </div>
+      <Sidebar2 />
     </div>
   );
 };
