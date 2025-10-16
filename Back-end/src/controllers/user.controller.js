@@ -1,6 +1,6 @@
 import prisma from '../config/database.js';
 import { hashPassword } from '../utils/hash.js';
-import { validateEmail, validateLength, validateRequired } from '../utils/validators.js';
+import { validateEmail, validateLength, validateRequired, validatePhone, validatePostalCode, validateUrl } from '../utils/validators.js';
 import { NotFoundError, AuthorizationError, ValidationError, ConflictError } from '../utils/errors.js';
 
 /**
@@ -19,6 +19,7 @@ export const getProfile = async (req, res, next) => {
         avatar: true,
         description: true,
         gender: true,
+        phone: true,
         role: true,
         createdAt: true,
         updatedAt: true,
@@ -49,7 +50,7 @@ export const getProfile = async (req, res, next) => {
  */
 export const updateProfile = async (req, res, next) => {
   try {
-    const { firstName, lastName, avatar, description, gender, email } = req.body;
+    const { firstName, lastName, avatar, description, gender, email, phone } = req.body;
     
     const updateData = {};
     
@@ -66,6 +67,7 @@ export const updateProfile = async (req, res, next) => {
     
     if (avatar !== undefined) {
       validateLength(avatar, 'URL avatar', 500);
+      validateUrl(avatar, 'URL avatar');
       updateData.avatar = avatar;
     }
     
@@ -78,7 +80,13 @@ export const updateProfile = async (req, res, next) => {
       if (gender && !['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY'].includes(gender)) {
         throw new ValidationError('Genre invalide');
       }
-      updateData.gender = gender;
+      // Mapper chaîne vide -> null pour l'enum Prisma
+      updateData.gender = gender || null;
+    }
+    if (phone !== undefined) {
+      validateLength(phone, 'Téléphone', 30);
+      validatePhone(phone);
+      updateData.phone = phone || null;
     }
     
     if (email !== undefined) {
@@ -105,6 +113,7 @@ export const updateProfile = async (req, res, next) => {
         avatar: true,
         description: true,
         gender: true,
+        phone: true,
         role: true,
         createdAt: true,
         updatedAt: true
@@ -355,6 +364,7 @@ export const addAddress = async (req, res, next) => {
     const { street, city, postalCode, country, isPrimary } = req.body;
     
     validateRequired(['street', 'city', 'postalCode', 'country'], req.body);
+    validatePostalCode(postalCode);
     
     // Si cette adresse est définie comme principale, retirer le flag des autres
     if (isPrimary) {
@@ -393,6 +403,7 @@ export const updateAddress = async (req, res, next) => {
   try {
     const { addressId } = req.params;
     const { street, city, postalCode, country, isPrimary } = req.body;
+    if (postalCode !== undefined) validatePostalCode(postalCode);
     
     // Vérifier que l'adresse appartient à l'utilisateur
     const address = await prisma.address.findUnique({

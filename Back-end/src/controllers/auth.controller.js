@@ -6,7 +6,7 @@ import { AuthenticationError, ConflictError, ValidationError } from '../utils/er
 
 export const signup = async (req, res, next) => {
   try {
-    const { email, password, firstName, lastName, gender } = req.body;
+    const { email, password, firstName, lastName, gender, phone, address } = req.body;
     
     validateRequired(['email', 'password', 'firstName', 'lastName'], req.body);
     validateEmail(email);
@@ -22,14 +22,33 @@ export const signup = async (req, res, next) => {
     // Le mot de passe arrive déjà hashé du frontend
     const passwordHash = password;
     
-    const user = await prisma.user.create({
+    const created = await prisma.user.create({
       data: {
         email: email.toLowerCase(),
         passwordHash,
         firstName,
         lastName,
-        gender: gender || null
-      },
+        gender: gender || null,
+        phone: phone || null,
+      }
+    });
+
+    // Créer une adresse initiale si fournie
+    if (address && address.street && address.city && address.postalCode && address.country) {
+      await prisma.address.create({
+        data: {
+          street: address.street,
+          city: address.city,
+          postalCode: address.postalCode,
+          country: address.country,
+          isPrimary: true,
+          userId: created.id,
+        }
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: created.id },
       select: {
         id: true,
         email: true,
@@ -38,6 +57,7 @@ export const signup = async (req, res, next) => {
         avatar: true,
         description: true,
         gender: true,
+        phone: true,
         role: true,
         createdAt: true
       }

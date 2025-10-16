@@ -3,14 +3,14 @@ import { ValidationError, ContentLengthError } from './errors.js';
 export const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    throw new ValidationError('Invalid email format');
+    throw new ValidationError("Format d'email invalide");
   }
   return true;
 };
 
 export const validatePassword = (password) => {
   if (password.length < 8) {
-    throw new ValidationError('Password must be at least 8 characters long');
+    throw new ValidationError('Le mot de passe doit contenir au moins 8 caractères');
   }
   
   const hasUpperCase = /[A-Z]/.test(password);
@@ -18,7 +18,7 @@ export const validatePassword = (password) => {
   const hasNumber = /\d/.test(password);
   
   if (!hasUpperCase || !hasLowerCase || !hasNumber) {
-    throw new ValidationError('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+    throw new ValidationError('Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre');
   }
   
   return true;
@@ -34,7 +34,36 @@ export const validateLength = (value, fieldName, maxLength) => {
 export const validateRequired = (fields, data) => {
   const missing = fields.filter(field => !data[field]);
   if (missing.length > 0) {
-    throw new ValidationError(`Missing required fields: ${missing.join(', ')}`);
+    throw new ValidationError(`Champs requis manquants: ${missing.join(', ')}`);
   }
   return true;
+};
+
+export const validatePhone = (phone) => {
+  if (!phone) return true;
+  // Accepte formats internationaux simples + espaces
+  const phoneRegex = /^[+]?([0-9][\s-]?){6,15}$/;
+  if (!phoneRegex.test(phone)) {
+    throw new ValidationError('Numéro de téléphone invalide');
+  }
+  return true;
+};
+
+export const validatePostalCode = (postalCode) => {
+  if (!postalCode) return true;
+  const pc = String(postalCode).trim();
+  if (pc.length < 3 || pc.length > 10) {
+    throw new ValidationError('Code postal invalide');
+  }
+  return true;
+};
+
+export const validateUrl = (url, fieldName = 'URL') => {
+  if (!url) return true;
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    throw new ValidationError(`${fieldName} invalide`);
+  }
 };

@@ -133,7 +133,7 @@ export const Feed = () => {
             )}
           </>
         )}
-      </div>
+      </div>      
     </div>
   );
 };

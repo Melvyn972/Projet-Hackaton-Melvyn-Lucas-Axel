@@ -16,6 +16,7 @@ export interface User {
   avatar?: string;
   description?: string;
   gender?: string;
+  phone?: string;
   role: 'USER' | 'ADMIN';
   createdAt: string;
 }
@@ -53,7 +54,7 @@ export interface Comment {
 }
 
 export const authApi = {
-  signup: (data: { email: string; password: string; firstName: string; lastName: string; gender?: string }) =>
+  signup: (data: { email: string; password: string; firstName: string; lastName: string; gender?: string; phone?: string; address?: { street: string; city: string; postalCode: string; country: string } }) =>
     api.post('/auth/signup', data),
   signin: (email: string, password: string) => api.post('/auth/signin', { email, password }),
   signout: () => api.post('/auth/signout'),
@@ -66,6 +67,12 @@ export const userApi = {
   getUserById: (userId: string) => api.get(`/users/${userId}`),
   searchUsers: (query: string) => api.get(`/users/search?q=${query}`),
   addProfileComment: (userId: string, content: string) => api.post(`/users/${userId}/comments`, { content }),
+  // Adresses
+  addAddress: (data: { street: string; city: string; postalCode: string; country: string; isPrimary?: boolean }) =>
+    api.post('/users/addresses', data),
+  updateAddress: (addressId: string, data: Partial<{ street: string; city: string; postalCode: string; country: string; isPrimary: boolean }>) =>
+    api.put(`/users/addresses/${addressId}`, data),
+  deleteAddress: (addressId: string) => api.delete(`/users/addresses/${addressId}`),
 };
 
 export const postApi = {
@@ -88,6 +95,11 @@ export const adminApi = {
   getAllUsers: (params?: any) => api.get('/admin/dashboard/users', { params }),
   getTopUsers: (limit = 10) => api.get(`/admin/dashboard/top-users?limit=${limit}`),
   getTopPosts: (limit = 10) => api.get(`/admin/dashboard/top-posts?limit=${limit}`),
+  getActivityTimeline: (days = 30) => api.get(`/admin/dashboard/activity-timeline?days=${days}`),
+  getUserStats: (userId: string) => api.get(`/admin/users/${userId}/stats`),
+  updateUserRole: (userId: string, role: 'USER' | 'ADMIN') =>
+    api.put(`/admin/users/${userId}/role`, { role }),
+  deleteUser: (userId: string) => api.delete(`/admin/users/${userId}`),
 };
 
 export default api;
