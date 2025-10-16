@@ -1,4 +1,4 @@
-import { Heart, MessageCircle } from 'lucide-react';
+import { Heart, MessageCircle, Send } from 'lucide-react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
@@ -6,6 +6,8 @@ import { Input } from './ui/input';
 import type { Post } from '../lib/api';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 interface PostCardProps {
   post: Post;
