@@ -7,6 +7,7 @@ import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { Feed } from './pages/Feed';
 import { Profile } from './pages/Profile';
+import { UserProfile } from './pages/UserProfile';
 import { Admin } from './pages/Admin';
 
 function App() {
@@ -43,6 +44,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/:userId"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
             </ProtectedRoute>
           }
         />
