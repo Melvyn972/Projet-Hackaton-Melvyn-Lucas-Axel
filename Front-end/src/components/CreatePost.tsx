@@ -20,7 +20,7 @@ export const CreatePost = ({ onSubmit }: CreatePostProps) => {
 
   const handleSubmit = async () => {
     if (!content.trim()) return;
-    
+
     setIsSubmitting(true);
     try {
       await onSubmit(content, imageUrl || undefined);
@@ -38,7 +38,7 @@ export const CreatePost = ({ onSubmit }: CreatePostProps) => {
   };
 
   return (
-    <Card className="mb-6">
+    <Card className="">
       <CardContent className="pt-6">
         <div className="flex gap-3">
           <Avatar>
@@ -63,6 +63,7 @@ export const CreatePost = ({ onSubmit }: CreatePostProps) => {
             )}
             <div className="flex items-center justify-between mt-3">
               <Button
+                className="cursor-pointer"
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowImageInput(!showImageInput)}
@@ -71,6 +72,7 @@ export const CreatePost = ({ onSubmit }: CreatePostProps) => {
                 Photo
               </Button>
               <Button
+                className="cursor-pointer"
                 onClick={handleSubmit}
                 disabled={!content.trim() || isSubmitting}
               >
