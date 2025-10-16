@@ -42,6 +42,7 @@ model User {
   avatar      String?
   description String?  @db.Text
   gender      Gender?
+  phone       String?
   
   // Dates
   createdAt   DateTime @default(now())

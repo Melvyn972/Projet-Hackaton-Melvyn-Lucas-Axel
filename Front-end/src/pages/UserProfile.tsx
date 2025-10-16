@@ -116,17 +116,11 @@ export const UserProfile = () => {
                     <p className="text-muted-foreground">{user.description}</p>
                   </div>
                 )}
-                <div className="flex gap-6 pt-4 border-t">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Membre depuis</p>
-                    <p className="font-semibold">
-                      {new Date(user.createdAt).toLocaleDateString('fr-FR')}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Rôle</p>
-                    <p className="font-semibold">{user.role}</p>
-                  </div>
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-muted-foreground">Membre depuis</p>
+                  <p className="font-semibold">
+                    {new Date(user.createdAt).toLocaleDateString('fr-FR')}
+                  </p>
                 </div>
               </div>
             </div>

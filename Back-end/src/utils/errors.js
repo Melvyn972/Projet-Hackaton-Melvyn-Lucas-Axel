@@ -8,43 +8,43 @@ export class AppError extends Error {
 }
 
 export class AuthenticationError extends AppError {
-  constructor(message = 'Authentication failed') {
+  constructor(message = 'Authentification échouée') {
     super(message, 401);
   }
 }
 
 export class AuthorizationError extends AppError {
-  constructor(message = 'Access denied') {
+  constructor(message = 'Accès refusé') {
     super(message, 403);
   }
 }
 
 export class ValidationError extends AppError {
-  constructor(message = 'Validation failed') {
+  constructor(message = 'Échec de validation') {
     super(message, 400);
   }
 }
 
 export class NotFoundError extends AppError {
-  constructor(message = 'Resource not found') {
+  constructor(message = 'Ressource introuvable') {
     super(message, 404);
   }
 }
 
 export class ConflictError extends AppError {
-  constructor(message = 'Resource already exists') {
+  constructor(message = 'La ressource existe déjà') {
     super(message, 409);
   }
 }
 
 export class SessionExpiredError extends AppError {
-  constructor(message = 'Session expired') {
+  constructor(message = 'Session expirée') {
     super(message, 401);
   }
 }
 
 export class ContentLengthError extends ValidationError {
   constructor(field, maxLength) {
-    super(`${field} exceeds maximum length of ${maxLength} characters`);
+    super(`${field} dépasse la longueur maximale de ${maxLength} caractères`);
   }
 }

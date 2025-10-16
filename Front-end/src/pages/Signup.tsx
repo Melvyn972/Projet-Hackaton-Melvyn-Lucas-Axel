@@ -15,6 +15,12 @@ export const Signup = () => {
     confirmPassword: '',
     firstName: '',
     lastName: '',
+    phone: '',
+    gender: '',
+    street: '',
+    city: '',
+    postalCode: '',
+    country: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -50,7 +56,15 @@ export const Signup = () => {
         email: formData.email,
         password: hashedPassword,
         firstName: formData.firstName,
-        lastName: formData.lastName
+        lastName: formData.lastName,
+        gender: formData.gender || undefined,
+        phone: formData.phone || undefined,
+        address: formData.street && formData.city && formData.postalCode && formData.country ? {
+          street: formData.street,
+          city: formData.city,
+          postalCode: formData.postalCode,
+          country: formData.country,
+        } : undefined,
       });
       setUser(response.data.user);
       navigate('/');
@@ -99,6 +113,49 @@ export const Signup = () => {
                   onChange={handleChange}
                   required
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Téléphone</label>
+                <Input
+                  name="phone"
+                  placeholder="+33 6 12 34 56 78"
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Genre</label>
+                <select name="gender" value={formData.gender} onChange={handleChange} className="border rounded-md h-9 px-2 w-full">
+                  <option value="">Non renseigné</option>
+                  <option value="MALE">Homme</option>
+                  <option value="FEMALE">Femme</option>
+                  <option value="OTHER">Autre</option>
+                  <option value="PREFER_NOT_TO_SAY">Préférer ne pas dire</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Rue</label>
+                <Input name="street" placeholder="10 rue de Paris" value={formData.street} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Ville</label>
+                <Input name="city" placeholder="Paris" value={formData.city} onChange={handleChange} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Code postal</label>
+                <Input name="postalCode" placeholder="75000" value={formData.postalCode} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Pays</label>
+                <Input name="country" placeholder="France" value={formData.country} onChange={handleChange} />
               </div>
             </div>
             

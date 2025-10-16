@@ -1,4 +1,4 @@
-import { Home, User, Users, Settings, Shield, LogOut } from 'lucide-react';
+import { Home, User, Shield, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -22,8 +22,6 @@ export const Sidebar = () => {
   const menuItems = [
     { icon: Home, label: 'Accueil', path: '/' },
     { icon: User, label: 'Profil', path: '/profile' },
-    { icon: Users, label: 'Amis', path: '/friends' },
-    { icon: Settings, label: 'Paramètres', path: '/settings' },
   ];
 
   if (user?.role === 'ADMIN') {
