@@ -128,7 +128,7 @@ export const Signup = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Genre</label>
-                <select name="gender" value={formData.gender} onChange={handleChange} className="border rounded-md h-9 px-2 w-full">
+                <select name="gender" value={formData.gender} onChange={handleChange} className="cursor-pointer border rounded-md h-9 px-2 w-full">
                   <option value="">Non renseigné</option>
                   <option value="MALE">Homme</option>
                   <option value="FEMALE">Femme</option>
@@ -198,7 +198,7 @@ export const Signup = () => {
               />
             </div>
             
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="cursor-pointer w-full" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

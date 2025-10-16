@@ -47,7 +47,7 @@ export const UserProfile = () => {
 
   const handleAddComment = async () => {
     if (!comment.trim()) return;
-    
+
     setLoading(true);
     try {
       await userApi.addProfileComment(userId!, comment);
@@ -81,12 +81,12 @@ export const UserProfile = () => {
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar />
-      
+
       <div className="flex-1 max-w-4xl mx-auto p-6">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-4"
+          className="mb-4 cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Retour
@@ -102,7 +102,7 @@ export const UserProfile = () => {
                 <AvatarImage src={user.avatar} />
                 <AvatarFallback className="text-3xl">{getInitials()}</AvatarFallback>
               </Avatar>
-              
+
               <div className="flex-1 space-y-4">
                 <div>
                   <h2 className="text-2xl font-bold">
@@ -143,8 +143,9 @@ export const UserProfile = () => {
                 placeholder="Écrivez un commentaire sur ce profil..."
                 className="min-h-[100px]"
               />
-              <Button 
-                onClick={handleAddComment} 
+              <Button
+                className='cursor-pointer'
+                onClick={handleAddComment}
                 disabled={loading || !comment.trim()}
               >
                 {loading ? 'Envoi...' : 'Publier le commentaire'}

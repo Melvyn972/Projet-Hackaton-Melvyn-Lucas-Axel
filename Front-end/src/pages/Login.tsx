@@ -39,7 +39,7 @@ export const Login = () => {
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
             <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center">
-              <span className="text-2xl font-bold text-primary-foreground">S</span>
+              <span className="text-2xl font-bold text-primary-foreground">T</span>
             </div>
           </div>
           <CardTitle className="text-2xl text-center">Connexion</CardTitle>
@@ -72,7 +72,7 @@ export const Login = () => {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="cursor-pointer w-full" disabled={loading}>
               {loading ? 'Connexion...' : 'Se connecter'}
             </Button>
           </form>
@@ -80,7 +80,7 @@ export const Login = () => {
             <span className="text-muted-foreground">Pas encore de compte ? </span>
             <Button
               variant="link"
-              className="p-0 h-auto"
+              className="cursor-pointer p-0 h-auto"
               onClick={() => navigate('/signup')}
             >
               S'inscrire
