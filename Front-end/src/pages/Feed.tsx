@@ -86,7 +86,7 @@ export const Feed = () => {
     <div className="flex min-h-screen bg-background">
       <Sidebar />
       
-      <div className="flex-1 max-w-2xl mx-auto p-6">
+      <div className="flex-1 max-w-2xl mx-auto p-4">
         <CreatePost onSubmit={handleCreatePost} />
         
         {loading && page === 1 ? (

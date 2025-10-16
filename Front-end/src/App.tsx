@@ -54,26 +54,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/friends"
-          element={
-            <ProtectedRoute>
-              <div className="flex min-h-screen items-center justify-center">
-                <p className="text-2xl">Page Amis - En construction</p>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <div className="flex min-h-screen items-center justify-center">
-                <p className="text-2xl">Page Paramètres - En construction</p>
-              </div>
-            </ProtectedRoute>
-          }
-        />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
