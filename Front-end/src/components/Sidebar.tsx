@@ -41,7 +41,7 @@ export const Sidebar = () => {
   return (
     <div className="h-screen sticky top-0 w-2/12 border-r bg-card p-4 flex flex-col">
       <div className="mb-8">
-        <a href="/"><h1 className="text-2xl font-bold text-primary">Twittor</h1></a>
+        <a href="/"><h1 className="text-2xl font-bold text-primary">Twittor.onion</h1></a>
       </div>
 
       <nav className="flex-1 space-y-2">
