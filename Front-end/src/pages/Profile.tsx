@@ -10,11 +10,17 @@ import type { User } from '../lib/api';
 import { userApi } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { Edit2, Save, X } from 'lucide-react';
+import { toast } from 'sonner';
+import { Trash2, Star, StarOff, Plus } from 'lucide-react';
 
 export const Profile = () => {
   const { setUser } = useAuthStore();
   const [profile, setProfile] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [addressEdits, setAddressEdits] = useState<Record<string, any>>({});
+  const [addressEditOpen, setAddressEditOpen] = useState<Record<string, boolean>>({});
+  const [newAddressOpen, setNewAddressOpen] = useState(false);
+  const [newAddress, setNewAddress] = useState({ street: '', city: '', postalCode: '', country: '', isPrimary: false });
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -39,6 +45,12 @@ export const Profile = () => {
       const response = await userApi.getProfile();
       setProfile(response.data.user);
       const primary = (response.data.user.addresses || [])[0] || null;
+      const draft: Record<string, any> = {};
+      (response.data.user.addresses || []).forEach((a: any) => {
+        draft[a.id] = { street: a.street || '', city: a.city || '', postalCode: a.postalCode || '', country: a.country || '', isPrimary: !!a.isPrimary };
+      });
+      setAddressEdits(draft);
+      setAddressEditOpen({});
       setFormData({
         firstName: response.data.user.firstName,
         lastName: response.data.user.lastName,
@@ -66,6 +78,7 @@ export const Profile = () => {
       const response = await userApi.updateProfile(profilePayload);
       setProfile(response.data.user);
       setUser(response.data.user);
+      toast.success('Profil mis à jour');
       // Sauvegarder l'adresse principale (création ou mise à jour si au moins un champ fourni)
       const hasAddressInput = (street || city || postalCode || country).trim ?
         Boolean((street || '').trim() || (city || '').trim() || (postalCode || '').trim() || (country || '').trim()) :
@@ -82,6 +95,32 @@ export const Profile = () => {
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
+      toast.error('Erreur lors de la mise à jour du profil');
+    }
+  };
+
+  const handleAddAddress = async () => {
+    setNewAddressOpen(true);
+  };
+
+  const handleUpdateAddress = async (addressId: string, data: any) => {
+    try {
+      await userApi.updateAddress(addressId, data);
+      await loadProfile();
+      toast.success('Adresse mise à jour');
+    } catch (e) {
+      toast.error('Erreur lors de la mise à jour de ladresse');
+    }
+  };
+
+  const handleDeleteAddress = async (addressId: string) => {
+    if (!confirm('Supprimer cette adresse ?')) return;
+    try {
+      await userApi.deleteAddress(addressId);
+      await loadProfile();
+      toast.success('Adresse supprimée');
+    } catch (e) {
+      toast.error('Erreur lors de la suppression de ladresse');
     }
   };
 
@@ -244,14 +283,80 @@ export const Profile = () => {
                       </h2>
                       <p className="text-muted-foreground">{profile?.email}</p>
                     </div>
-                    {profile?.addresses && profile.addresses.length > 0 && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2">
-                          <p className="text-sm text-muted-foreground">Adresse principale</p>
-                          <p className="font-semibold">
-                            {profile.addresses[0].street}, {profile.addresses[0].postalCode} {profile.addresses[0].city}, {profile.addresses[0].country}
-                          </p>
+                    {profile?.addresses && (
+                      <div className="mt-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-muted-foreground">Adresses</p>
+                          <Button size="sm" variant="outline" className="cursor-pointer" onClick={handleAddAddress}>
+                            <Plus className="h-4 w-4 mr-2" /> Ajouter
+                          </Button>
                         </div>
+                        {newAddressOpen && (
+                          <div className="rounded-md border p-3 bg-muted/40">
+                            <div className="grid grid-cols-2 gap-2">
+                              <Input value={newAddress.street} onChange={(e) => setNewAddress({ ...newAddress, street: e.target.value })} placeholder="Rue" />
+                              <Input value={newAddress.city} onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })} placeholder="Ville" />
+                              <Input value={newAddress.postalCode} onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })} placeholder="Code postal" />
+                              <Input value={newAddress.country} onChange={(e) => setNewAddress({ ...newAddress, country: e.target.value })} placeholder="Pays" />
+                              <div className="col-span-2 flex items-center justify-end gap-2">
+                                <Button variant="outline" size="sm" className="cursor-pointer" onClick={() => setNewAddressOpen(false)}>Annuler</Button>
+                                <Button size="sm" className="cursor-pointer" onClick={async () => {
+                                  try {
+                                    if (!newAddress.street || !newAddress.city || !newAddress.postalCode || !newAddress.country) {
+                                      toast.error('Veuillez renseigner tous les champs');
+                                      return;
+                                    }
+                                    await userApi.addAddress(newAddress as any);
+                                    toast.success('Adresse créée');
+                                    setNewAddressOpen(false);
+                                    setNewAddress({ street: '', city: '', postalCode: '', country: '', isPrimary: false });
+                                    await loadProfile();
+                                  } catch (err) {
+                                    toast.error("Erreur lors de la création de l'adresse");
+                                  }
+                                }}>Créer</Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {profile.addresses.length === 0 ? (
+                          <p className="text-sm text-muted-foreground">Aucune adresse</p>
+                        ) : (
+                          <div className="space-y-2">
+                            {profile.addresses.map((addr: any) => (
+                              <div key={addr.id} className="rounded-md border p-3">
+                                {addressEditOpen[addr.id] ? (
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <Input value={addressEdits[addr.id]?.street || ''} onChange={(e) => setAddressEdits((prev) => ({ ...prev, [addr.id]: { ...prev[addr.id], street: e.target.value } }))} placeholder="Rue" />
+                                    <Input value={addressEdits[addr.id]?.city || ''} onChange={(e) => setAddressEdits((prev) => ({ ...prev, [addr.id]: { ...prev[addr.id], city: e.target.value } }))} placeholder="Ville" />
+                                    <Input value={addressEdits[addr.id]?.postalCode || ''} onChange={(e) => setAddressEdits((prev) => ({ ...prev, [addr.id]: { ...prev[addr.id], postalCode: e.target.value } }))} placeholder="Code postal" />
+                                    <Input value={addressEdits[addr.id]?.country || ''} onChange={(e) => setAddressEdits((prev) => ({ ...prev, [addr.id]: { ...prev[addr.id], country: e.target.value } }))} placeholder="Pays" />
+                                    <div className="col-span-2 flex items-center justify-end gap-2">
+                                      <Button variant="outline" size="sm" className="cursor-pointer" onClick={() => setAddressEditOpen((p) => ({ ...p, [addr.id]: false }))}>Annuler</Button>
+                                      <Button size="sm" className="cursor-pointer" onClick={() => handleUpdateAddress(addr.id, addressEdits[addr.id])}>Enregistrer</Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                      <p className="font-semibold">{addr.street}, {addr.postalCode} {addr.city}</p>
+                                      <p className="text-sm text-muted-foreground">{addr.country}</p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Button size="sm" variant="outline" className="cursor-pointer" onClick={() => setAddressEditOpen((p) => ({ ...p, [addr.id]: true }))}>Éditer</Button>
+                                      <Button size="sm" variant="outline" className="cursor-pointer" onClick={() => handleUpdateAddress(addr.id, { isPrimary: true })}>
+                                        {addr.isPrimary ? <><Star className="h-4 w-4 mr-2" /> Principale</> : <><StarOff className="h-4 w-4 mr-2" /> Définir principale</>}
+                                      </Button>
+                                      <Button size="sm" variant="destructive" className="cursor-pointer" onClick={() => handleDeleteAddress(addr.id)}>
+                                        <Trash2 className="h-4 w-4 mr-2" /> Supprimer
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                     {(profile?.phone || profile?.gender) && (

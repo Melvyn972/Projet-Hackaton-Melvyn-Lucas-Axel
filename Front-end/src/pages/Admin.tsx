@@ -1,11 +1,26 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { Sidebar2 } from '@/components/Sidebar2';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { adminApi, postApi, type Post, type User } from '../lib/api';
-import { Users, FileText, Heart, MessageCircle, Shield, Trash2, Search, TrendingUp } from 'lucide-react';
+import { Users, FileText, Heart, MessageCircle, Shield, Trash2, Search, TrendingUp, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 export const Admin = () => {
   const [activeTab, setActiveTab] = useState<'stats' | 'users' | 'posts'>('stats');
@@ -23,8 +38,25 @@ export const Admin = () => {
   const [userTotalPages, setUserTotalPages] = useState(1);
 
   const [posts, setPosts] = useState<Post[]>([]);
+  const [expandedUserIds, setExpandedUserIds] = useState<Record<string, boolean>>({});
   const [postsLoading, setPostsLoading] = useState(false);
   const [postSearch, setPostSearch] = useState('');
+
+  const formatGender = (g?: string | null) => {
+    if (!g || g === 'Non renseigné') return 'Non renseigné';
+    switch (g) {
+      case 'MALE':
+        return 'Homme';
+      case 'FEMALE':
+        return 'Femme';
+      case 'OTHER':
+        return 'Autre';
+      case 'PREFER_NOT_TO_SAY':
+        return 'Préférer ne pas dire';
+      default:
+        return 'Non renseigné';
+    }
+  };
 
   useEffect(() => {
     loadStatsSection();
@@ -114,7 +146,7 @@ export const Admin = () => {
   };
 
   if (loading) {
-    return <div className="flex min-h-screen items-center justify-center">Chargement...</div>;
+    return <div className="flex min-h-screen items-center justify-center">Chargement…</div>;
   }
 
   return (
@@ -123,13 +155,13 @@ export const Admin = () => {
       
       <div className="flex-1 p-6">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6">Dashboard Admin</h1>
+          <h1 className="text-3xl font-bold mb-6">Tableau de bord Admin</h1>
           
           {/* Tabs */}
           <div className="mb-6 flex gap-2">
             <Button className="cursor-pointer" variant={activeTab === 'stats' ? 'default' : 'outline'} onClick={() => setActiveTab('stats')}>Statistiques</Button>
             <Button className="cursor-pointer" variant={activeTab === 'users' ? 'default' : 'outline'} onClick={() => setActiveTab('users')}>Utilisateurs</Button>
-            <Button className="cursor-pointer" variant={activeTab === 'posts' ? 'default' : 'outline'} onClick={() => setActiveTab('posts')}>Posts</Button>
+            <Button className="cursor-pointer" variant={activeTab === 'posts' ? 'default' : 'outline'} onClick={() => setActiveTab('posts')}>Publications</Button>
           </div>
           
           {activeTab === 'stats' && (
@@ -149,7 +181,7 @@ export const Admin = () => {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Posts</CardTitle>
+                <CardTitle className="text-sm font-medium">Publications</CardTitle>
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -188,24 +220,32 @@ export const Admin = () => {
                 <Card className="lg:col-span-2">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Activité (14 jours)</CardTitle>
-                    <CardDescription>Nouveaux utilisateurs et posts par jour</CardDescription>
+                    <CardDescription>Nouveaux utilisateurs et publications par jour</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2">
-                      {timeline.map((d) => (
-                        <div key={d.date} className="flex items-center justify-between text-sm">
-                          <span className="w-28 text-muted-foreground">{d.date}</span>
-                          <div className="flex-1 mx-3 h-2 bg-muted rounded overflow-hidden">
-                            <div className="h-2 bg-primary/70" style={{ width: `${Math.min(100, d.newUsers * 5)}%` }} />
-                          </div>
-                          <span className="w-14 text-right">{d.newUsers} U</span>
-                          <div className="flex-1 mx-3 h-2 bg-muted rounded overflow-hidden">
-                            <div className="h-2 bg-secondary" style={{ width: `${Math.min(100, d.newPosts * 5)}%` }} />
-                          </div>
-                          <span className="w-14 text-right">{d.newPosts} P</span>
-                        </div>
-                      ))}
-                    </div>
+                    <ChartContainer
+                      className="w-full"
+                      config={{
+                        newUsers: {
+                          label: 'Nouveaux utilisateurs',
+                          color: 'var(--chart-1)',
+                        },
+                        newPosts: {
+                          label: 'Nouvelles publications',
+                          color: 'var(--chart-2)',
+                        },
+                      }}
+                    >
+                      <AreaChart data={timeline} margin={{ left: 12, right: 12 }}>
+                        <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                        <XAxis dataKey="date" tickLine={false} axisLine={false} minTickGap={24} />
+                        <YAxis tickLine={false} axisLine={false} allowDecimals={false} width={30} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Area type="monotone" dataKey="newUsers" stroke="var(--color-newUsers)" fill="var(--color-newUsers)" fillOpacity={0.35} />
+                        <Area type="monotone" dataKey="newPosts" stroke="var(--color-newPosts)" fill="var(--color-newPosts)" fillOpacity={0.35} />
+                        <ChartLegend content={<ChartLegendContent />} />
+                      </AreaChart>
+                    </ChartContainer>
                   </CardContent>
                 </Card>
 
@@ -219,7 +259,7 @@ export const Admin = () => {
                 <div className="space-y-2">
                   {stats?.genderDistribution.map((item: any) => (
                     <div key={item.gender} className="flex justify-between items-center">
-                      <span className="text-sm">{item.gender}</span>
+                      <span className="text-sm">{formatGender(item.gender)}</span>
                       <span className="font-semibold">{item.count}</span>
                     </div>
                   ))}
@@ -229,20 +269,46 @@ export const Admin = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle>Métriques d’engagement</CardTitle>
-                      <CardDescription>Explications rapides</CardDescription>
+                      <CardDescription>Survolez pour les définitions</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <ul className="text-sm space-y-2 list-disc pl-5">
-                        <li><b>Posts/Utilisateur</b>: productivité moyenne par compte.</li>
-                        <li><b>Commentaires/Post</b>: conversation moyenne par contenu.</li>
-                        <li><b>Likes/Post</b>: attractivité moyenne des contenus.</li>
-                        <li><b>Taux d’engagement</b>: (likes + commentaires) / posts, en %.</li>
-                      </ul>
-                      <div className="mt-4 space-y-2">
-                        <div className="flex justify-between"><span>Posts/Utilisateur</span><span className="font-semibold">{stats?.averages.postsPerUser}</span></div>
-                        <div className="flex justify-between"><span>Commentaires/Post</span><span className="font-semibold">{stats?.averages.commentsPerPost}</span></div>
-                        <div className="flex justify-between"><span>Likes/Post</span><span className="font-semibold">{stats?.averages.likesPerPost}</span></div>
-                        <div className="flex justify-between"><span>Taux d’engagement</span><span className="font-semibold">{stats?.averages.engagementRate}%</span></div>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="text-sm cursor-help">Posts/Utilisateur</span>
+                            </TooltipTrigger>
+                            <TooltipContent>Nombre moyen de posts publiés par utilisateur.</TooltipContent>
+                          </Tooltip>
+                          <span className="font-semibold">{stats?.averages.postsPerUser}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="text-sm cursor-help">Commentaires/Post</span>
+                            </TooltipTrigger>
+                            <TooltipContent>Nombre moyen de commentaires par post.</TooltipContent>
+                          </Tooltip>
+                          <span className="font-semibold">{stats?.averages.commentsPerPost}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="text-sm cursor-help">Likes/Post</span>
+                            </TooltipTrigger>
+                            <TooltipContent>Nombre moyen de likes par post.</TooltipContent>
+                          </Tooltip>
+                          <span className="font-semibold">{stats?.averages.likesPerPost}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="text-sm cursor-help">Taux d’engagement</span>
+                            </TooltipTrigger>
+                            <TooltipContent>(likes + commentaires) / posts, en pourcentage.</TooltipContent>
+                          </Tooltip>
+                          <span className="font-semibold">{stats?.averages.engagementRate}%</span>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -268,7 +334,7 @@ export const Admin = () => {
                 </Card>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Top posts</CardTitle>
+                    <CardTitle>Top publications</CardTitle>
                     <CardDescription>Plus likés/commentés</CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -313,25 +379,61 @@ export const Admin = () => {
                     ) : users.length === 0 ? (
                       <div className="py-8 text-center text-sm text-muted-foreground">Aucun utilisateur</div>
                     ) : (
-                      users.map((u) => (
-                        <div key={u.id} className="py-3 flex items-center justify-between gap-3">
-                          <div className="min-w-0">
-                            <div className="font-medium truncate">{u.firstName} {u.lastName}</div>
-                            <div className="text-xs text-muted-foreground truncate">{u.email}</div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1 text-xs px-2 py-1 rounded border">
-                              <Shield className="h-3 w-3" />
-                              {u.role}
+                      users.map((u: any) => (
+                        <div key={u.id} className="py-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="min-w-0">
+                              <div className="font-medium truncate">{u.firstName} {u.lastName}</div>
+                              <div className="text-xs text-muted-foreground truncate">{u.email}</div>
+                              <div className="text-xs text-muted-foreground">{u._count?.addresses || 0} adresse{(u._count?.addresses || 0) > 1 ? 's' : ''}</div>
                             </div>
-                            <select className="cursor-pointer border rounded-md h-9 px-2" value={u.role} onChange={(e) => onChangeUserRole(u.id, e.target.value as 'USER' | 'ADMIN')}>
-                              <option value="USER">USER</option>
-                              <option value="ADMIN">ADMIN</option>
-                            </select>
-                            <Button className='cursor-pointer' variant="destructive" size="icon" aria-label="Supprimer" onClick={() => onDeleteUser(u.id)}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="cursor-pointer"
+                                onClick={() => setExpandedUserIds((prev) => ({ ...prev, [u.id]: !prev[u.id] }))}
+                              >
+                                <MapPin className="h-4 w-4 mr-2" />
+                                Adresses
+                                {expandedUserIds[u.id] ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
+                              </Button>
+                              <div className="flex items-center gap-1 text-xs px-2 py-1 rounded border">
+                                <Shield className="h-3 w-3" />
+                                {u.role}
+                              </div>
+                              <select className="cursor-pointer border rounded-md h-9 px-2" value={u.role} onChange={(e) => onChangeUserRole(u.id, e.target.value as 'USER' | 'ADMIN')}>
+                                <option value="USER">USER</option>
+                                <option value="ADMIN">ADMIN</option>
+                              </select>
+                              <Button className='cursor-pointer' variant="destructive" size="icon" aria-label="Supprimer" onClick={() => onDeleteUser(u.id)}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
+                          {expandedUserIds[u.id] && (
+                            <div className="mt-3 rounded-md border bg-muted/40 p-3">
+                              {u.addresses && u.addresses.length > 0 ? (
+                                <div className="space-y-2 text-sm">
+                                  {u.addresses.map((a: any) => (
+                                    <div key={a.id} className="flex items-start justify-between">
+                                      <div>
+                                        <div className="font-medium">
+                                          {a.street}, {a.postalCode} {a.city}
+                                        </div>
+                                        <div className="text-muted-foreground">{a.country}</div>
+                                      </div>
+                                      {a.isPrimary && (
+                                        <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary">Principale</span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-xs text-muted-foreground">Aucune adresse</div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       ))
                     )}
@@ -351,8 +453,8 @@ export const Admin = () => {
             <div className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Modération des posts</CardTitle>
-                  <CardDescription>Supprimer les posts problématiques</CardDescription>
+                  <CardTitle>Modération des publications</CardTitle>
+                  <CardDescription>Supprimer les publications problématiques</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-2 mb-4 items-center">

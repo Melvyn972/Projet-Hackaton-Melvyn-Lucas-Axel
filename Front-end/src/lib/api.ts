@@ -67,6 +67,9 @@ export const userApi = {
   getUserById: (userId: string) => api.get(`/users/${userId}`),
   searchUsers: (query: string) => api.get(`/users/search?q=${query}`),
   addProfileComment: (userId: string, content: string) => api.post(`/users/${userId}/comments`, { content }),
+  updateProfileComment: (commentId: string, content: string) =>
+    api.put(`/users/comments/${commentId}`, { content }),
+  deleteProfileComment: (commentId: string) => api.delete(`/users/comments/${commentId}`),
   // Adresses
   addAddress: (data: { street: string; city: string; postalCode: string; country: string; isPrimary?: boolean }) =>
     api.post('/users/addresses', data),

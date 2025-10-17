@@ -162,6 +162,17 @@ export const getAllUsers = async (req, res, next) => {
           role: true,
           createdAt: true,
           updatedAt: true,
+          addresses: {
+            orderBy: { isPrimary: 'desc' },
+            select: {
+              id: true,
+              street: true,
+              city: true,
+              postalCode: true,
+              country: true,
+              isPrimary: true,
+            }
+          },
           _count: {
             select: {
               posts: true,

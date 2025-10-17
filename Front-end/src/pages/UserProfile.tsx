@@ -9,6 +9,16 @@ import { Textarea } from '../components/ui/textarea';
 import type { User } from '../lib/api';
 import { userApi } from '../lib/api';
 import { ArrowLeft, MessageCircle } from 'lucide-react';
+import { useAuthStore } from '../store/authStore';
+import { Input } from '../components/ui/input';
+import { MoreVertical, Edit2, Trash2, Save, X } from 'lucide-react';
+import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../components/ui/dropdown-menu';
 
 interface ProfileComment {
   id: string;
@@ -29,6 +39,11 @@ export const UserProfile = () => {
   const [profileComments, setProfileComments] = useState<ProfileComment[]>([]);
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
+  const { user: currentUser } = useAuthStore();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (userId) {
@@ -55,11 +70,58 @@ export const UserProfile = () => {
       setComment('');
       // Recharger le profil pour afficher le nouveau commentaire
       loadUser();
+      toast.success('Commentaire ajouté');
     } catch (error: any) {
       console.error('Error adding comment:', error);
-      alert(error.response?.data?.error || 'Erreur lors de l\'ajout du commentaire');
+      toast.error(error.response?.data?.error || 'Erreur lors de l\'ajout du commentaire');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const canEdit = (c: ProfileComment) => currentUser?.id === c.author.id;
+  const canDelete = (c: ProfileComment) => currentUser?.id === c.author.id || currentUser?.id === userId;
+
+  const startEdit = (c: ProfileComment) => {
+    setEditingId(c.id);
+    setEditText(c.content);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditText('');
+  };
+
+  const saveEdit = async (c: ProfileComment) => {
+    if (!canEdit(c) || saving) return;
+    const newText = editText.trim();
+    if (!newText) return;
+    setSaving(true);
+    try {
+      const res = await userApi.updateProfileComment(c.id, newText);
+      const updated = res.data.comment as ProfileComment;
+      setProfileComments((prev) => prev.map((pc) => (pc.id === c.id ? { ...pc, content: updated.content } : pc)));
+      cancelEdit();
+      toast.success('Commentaire modifié');
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Erreur lors de la modification');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteComment = async (c: ProfileComment) => {
+    if (!canDelete(c)) return;
+    if (!confirm('Supprimer ce commentaire ?')) return;
+    setDeletingId(c.id);
+    try {
+      await userApi.deleteProfileComment(c.id);
+      setProfileComments((prev) => prev.filter((pc) => pc.id !== c.id));
+      toast.success('Commentaire supprimé');
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Erreur lors de la suppression');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -171,15 +233,60 @@ export const UserProfile = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm">
-                            {c.author.firstName} {c.author.lastName}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(c.createdAt).toLocaleDateString('fr-FR')}
-                          </span>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-sm">
+                              {c.author.firstName} {c.author.lastName}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(c.createdAt).toLocaleDateString('fr-FR')}
+                            </span>
+                          </div>
+                          {(canEdit(c) || canDelete(c)) && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button size="icon" variant="ghost" className="cursor-pointer">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {canEdit(c) && (
+                                  <DropdownMenuItem onClick={() => startEdit(c)}>
+                                    <Edit2 className="h-4 w-4" />
+                                    Modifier
+                                  </DropdownMenuItem>
+                                )}
+                                {canDelete(c) && (
+                                  <DropdownMenuItem variant="destructive" onClick={() => deleteComment(c)}>
+                                    <Trash2 className="h-4 w-4" />
+                                    Supprimer
+                                  </DropdownMenuItem>
+                                )}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
                         </div>
-                        <p className="text-sm mt-1">{c.content}</p>
+                        {editingId === c.id ? (
+                          <div className="mt-2 space-y-2">
+                            <Textarea
+                              value={editText}
+                              onChange={(e) => setEditText(e.target.value)}
+                              className="min-h-[80px]"
+                            />
+                            <div className="flex justify-end gap-2">
+                              <Button variant="outline" className="cursor-pointer" onClick={cancelEdit} disabled={saving}>
+                                <X className="h-4 w-4 mr-2" />
+                                Annuler
+                              </Button>
+                              <Button className="cursor-pointer" onClick={() => saveEdit(c)} disabled={saving}>
+                                <Save className="h-4 w-4 mr-2" />
+                                {saving ? 'Enregistrement…' : 'Enregistrer'}
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-sm mt-1">{c.content}</p>
+                        )}
                       </div>
                     </div>
                   ))}

@@ -7,6 +7,7 @@ import type { Post } from '../lib/api';
 import { postApi } from '../lib/api';
 import { Button } from '../components/ui/button';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const Feed = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -38,9 +39,16 @@ export const Feed = () => {
   }, []);
 
   const handleCreatePost = async (content: string, imageUrl?: string) => {
-    await postApi.createPost(content, imageUrl);
-    loadPosts(1);
-    setPage(1);
+    try {
+      await postApi.createPost(content, imageUrl);
+      toast.success('Post créé');
+      loadPosts(1);
+      setPage(1);
+    } catch (error: any) {
+      const msg = error.response?.data?.error || 'Erreur lors de la création du post';
+      toast.error(msg);
+      throw error;
+    }
   };
 
   const handleLike = async (postId: string) => {
@@ -70,12 +78,14 @@ export const Feed = () => {
       );
     } catch (error) {
       console.error('Error toggling like:', error);
+      toast.error('Erreur lors du like');
     }
   };
 
   const handleComment = async (postId: string, content: string) => {
     try {
       await postApi.addComment(postId, content);
+      toast.success('Commentaire ajouté');
       
       // Mettre à jour le compteur de commentaires
       setPosts((prev) =>
@@ -93,6 +103,32 @@ export const Feed = () => {
       );
     } catch (error) {
       console.error('Error adding comment:', error);
+      toast.error("Erreur lors de l'ajout du commentaire");
+      throw error;
+    }
+  };
+
+  const handleEdit = async (postId: string, content: string, imageUrl?: string) => {
+    try {
+      const response = await postApi.updatePost(postId, content, imageUrl);
+      const updated = response.data.post as Post;
+      setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, ...updated } : p)));
+      toast.success('Post modifié');
+    } catch (error) {
+      console.error('Error updating post:', error);
+      toast.error('Erreur lors de la modification du post');
+      throw error;
+    }
+  };
+
+  const handleDelete = async (postId: string) => {
+    try {
+      await postApi.deletePost(postId);
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+      toast.success('Post supprimé');
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast.error('Erreur lors de la suppression du post');
       throw error;
     }
   };
@@ -122,6 +158,8 @@ export const Feed = () => {
                 post={post}
                 onLike={handleLike}
                 onComment={handleComment}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ))}
             

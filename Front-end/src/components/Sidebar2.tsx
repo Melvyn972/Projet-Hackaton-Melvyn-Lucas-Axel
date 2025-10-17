@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../lib/api';
+import { toast } from 'sonner';
 
 import {
   DropdownMenu,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { Avatar, AvatarImage } from './ui/avatar';
+import ThemeSwitcher from './ThemeSwitcher';
 
 
 export const Sidebar2 = () => {
@@ -21,15 +23,17 @@ export const Sidebar2 = () => {
     try {
       await authApi.signout();
       logout();
+      toast.success('Déconnexion réussie');
       navigate('/login');
     } catch (error) {
       console.error('Logout error:', error);
+      toast.error("Erreur lors de la déconnexion");
     }
   };
 
   return (
     <div className="h-screen sticky top-0 w-2/12 border-r bg-card p-4 flex flex-col">
-      <div className="">
+      <div className="flex-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className='h-fit w-full cursor-pointer'>
@@ -60,6 +64,9 @@ export const Sidebar2 = () => {
             </Button>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+      <div className="mt-4">
+        <ThemeSwitcher />
       </div>
     </div>
   );

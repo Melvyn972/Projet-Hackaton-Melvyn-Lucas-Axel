@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { authApi } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { hashPasswordClient } from '../lib/crypto';
+import { toast } from 'sonner';
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -25,9 +26,12 @@ export const Login = () => {
       
       const response = await authApi.signin(email, hashedPassword);
       setUser(response.data.user);
+      toast.success('Connexion réussie');
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Erreur de connexion');
+      const msg = err.response?.data?.error || 'Erreur de connexion';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
