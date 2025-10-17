@@ -21,7 +21,7 @@ Application fullstack de réseau social avec React, Express et PostgreSQL.
 
 ### 📊 Schéma de base de données
 
-Le schéma complet est disponible dans [`Back-end/prisma/schema.prisma`](Back-end/prisma/schema.prisma)
+Le schéma complet est disponible dans [`schemaBD.pdf`](pdf de la base)
 
 **Modèles principaux :**
 - **User** : Utilisateurs (email, nom, prénom, avatar, description, genre, role)
