@@ -4,6 +4,14 @@ Application fullstack de réseau social avec React, Express et PostgreSQL.
 
 ---
 
+## 👥 Équipe
+
+- **Melvyn THIERRY-BELLEFOND**
+- **Lucas FABIOLE** 
+- **Axel RATOVO PESIN**
+
+---
+
 ## 📦 Livrables
 
 ### 🔗 Liens de déploiement
@@ -249,13 +257,6 @@ bunx prisma studio            # Interface visuelle de la BDD
 bun run dev                   # Lancer en mode développement
 bun run build                 # Build pour production
 ```
----
-
-## 👥 Équipe
-
-- **Melvyn**
-- **Lucas** 
-- **Axel**
 
 
 **Projet Hackathon - 2025** 🚀
